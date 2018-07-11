@@ -14,7 +14,7 @@ import com.alipay.api.AlipayObject;
  * @author auto create
  * @since 1.0, 2017-12-19 13:54:18
  */
-public class ZhimaCustomerCertificationCertifyRequest implements AlipayRequest<ZhimaCustomerCertificationCertifyResponse> {
+public class ZhimaCustomerCertificationCertifyRequest implements AlipayRequest {
 
 	private AlipayHashMap udfParams; // add user-defined text parameters
 	private String apiVersion="1.0";

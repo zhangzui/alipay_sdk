@@ -14,6 +14,7 @@ public class DefaultAlipayClient extends AbstractAlipayClient {
     private String privateKey;
     private String encryptKey;
     private String alipayPublicKey;
+
     private Signer signer;
     private SignChecker signChecker;
     private Encryptor encryptor;

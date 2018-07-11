@@ -2,16 +2,15 @@
  * Alipay.com Inc.
  * Copyright (c) 2004-2016 All Rights Reserved.
  */
-package com.alipay.api.internal.util;
+package com.zz.simple.sdk.utils;
 
-import java.security.GeneralSecurityException;
+import com.zz.simple.sdk.common.OpenApiRuntimeException;
+import com.zz.simple.sdk.utils.codec.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.alipay.api.AlipayApiException;
-import com.alipay.api.internal.util.codec.Base64;
+import java.security.GeneralSecurityException;
 
 /**
  *  加密工具
@@ -19,7 +18,7 @@ import com.alipay.api.internal.util.codec.Base64;
  * @author jiehua
  * @version $Id: AlipayEncrypt.java, v 0.1 2016-3-28 下午5:14:12 jiehua Exp $
  */
-public class AlipayEncrypt {
+public class EncryptUtils {
 
     private static final String AES_ALG         = "AES";
 
@@ -38,10 +37,10 @@ public class AlipayEncrypt {
      * @param encryptKey
      * @param charset
      * @return
-     * @throws AlipayApiException
+     * @throws OpenApiRuntimeException
      */
     public static String encryptContent(String content, String encryptType, String encryptKey,
-                                        String charset) throws AlipayApiException {
+                                        String charset) throws OpenApiRuntimeException {
 
         if (AES_ALG.equals(encryptType)) {
 
@@ -49,7 +48,7 @@ public class AlipayEncrypt {
 
         } else {
 
-            throw new AlipayApiException("当前不支持该算法类型：encrypeType=" + encryptType);
+            throw new OpenApiRuntimeException("当前不支持该算法类型：encrypeType=" + encryptType);
         }
 
     }
@@ -62,10 +61,10 @@ public class AlipayEncrypt {
      * @param encryptKey
      * @param charset
      * @return
-     * @throws AlipayApiException
+     * @throws OpenApiRuntimeException
      */
     public static String decryptContent(String content, String encryptType, String encryptKey,
-                                        String charset) throws AlipayApiException {
+                                        String charset) throws OpenApiRuntimeException {
 
         if (AES_ALG.equals(encryptType)) {
 
@@ -73,7 +72,7 @@ public class AlipayEncrypt {
 
         } else {
 
-            throw new AlipayApiException("当前不支持该算法类型：encrypeType=" + encryptType);
+            throw new OpenApiRuntimeException("当前不支持该算法类型：encrypeType=" + encryptType);
         }
 
     }
@@ -85,10 +84,10 @@ public class AlipayEncrypt {
      * @param aesKey
      * @param charset
      * @return
-     * @throws AlipayApiException
+     * @throws OpenApiRuntimeException
      */
     private static String aesEncrypt(String content, String aesKey, String charset)
-                                                                                   throws AlipayApiException {
+                                                                                   throws OpenApiRuntimeException {
 
         try {
             Cipher cipher = Cipher.getInstance(AES_CBC_PCK_ALG);
@@ -100,7 +99,7 @@ public class AlipayEncrypt {
             byte[] encryptBytes = cipher.doFinal(content.getBytes(charset));
             return new String(Base64.encodeBase64(encryptBytes));
         } catch (Exception e) {
-            throw new AlipayApiException("AES加密失败：Aescontent = " + content + "; charset = "
+            throw new OpenApiRuntimeException("AES加密失败：Aescontent = " + content + "; charset = "
                                          + charset, e);
         }
 
@@ -113,20 +112,20 @@ public class AlipayEncrypt {
      * @param key
      * @param charset
      * @return
-     * @throws AlipayApiException
+     * @throws OpenApiRuntimeException
      */
     private static String aesDecrypt(String content, String key, String charset)
-                                                                                throws AlipayApiException {
+                                                                                throws OpenApiRuntimeException {
         try {
             Cipher cipher = Cipher.getInstance(AES_CBC_PCK_ALG);
             IvParameterSpec iv = new IvParameterSpec(initIv(AES_CBC_PCK_ALG));
-            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(Base64.decodeBase64(key.getBytes()),
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key.getBytes(),
                 AES_ALG), iv);
 
             byte[] cleanBytes = cipher.doFinal(Base64.decodeBase64(content.getBytes()));
             return new String(cleanBytes, charset);
         } catch (Exception e) {
-            throw new AlipayApiException("AES解密失败：Aescontent = " + content + "; charset = "
+            throw new OpenApiRuntimeException("AES解密失败：Aescontent = " + content + "; charset = "
                                          + charset, e);
         }
     }

@@ -7,8 +7,16 @@ package com.alipay.api.test;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.request.AlipayTradeFastpayRefundQueryRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
+import org.junit.Test;
 
 /*import java.util.HashMap;
 import java.util.Map;
@@ -126,20 +134,49 @@ public class PublicTest {
       * @return
       * @throws AlipayApiException 
       */
-    /*
     private static AlipayClient getAlipayClient() {
-    AlipayClient client = new DefaultAlipayClient(
-    // 线上地址 
-        //  "https://openapi.alipay.com/gateway.do",
-        // 沙箱地址
-        "http://openapi.alipaydev.com/gateway.do",
-        // 公众号ID
-        "2013082200024933",
-        // 公众号RSA私钥
-        "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMiAec6fsssguUoRN3oEVEnQaqBLZjeafXAxCbKH3MTJaXPmnXOtqFFqFtcB8J9KqyFI1+o6YBDNIdFWMKqOwDDWPKqtdo90oGav3QMikjGYjIpe/gYYCQ/In/oVMVj326GmKrSpp0P+5LNCx59ajRpO8//rnOLd6h/tNxnfahanAgMBAAECgYEAusouMFfJGsIWvLEDbPIhkE7RNxpnVP/hQqb8sM0v2EkHrAk5wG4VNBvQwWe2QsAuY6jYNgdCPgTNL5fLaOnqkyy8IobrddtT/t3vDX96NNjHP4xfhnMbpGjkKZuljWKduK2FAh83eegrSH48TuWS87LjeZNHhr5x4C0KHeBTYekCQQD5cyrFuKua6GNG0dTj5gA67R9jcmtcDWgSsuIXS0lzUeGxZC4y/y/76l6S7jBYuGkz/x2mJaZ/b3MxxcGQ01YNAkEAzcRGLTXgTMg33UOR13oqXiV9cQbraHR/aPmS8kZxkJNYows3K3umNVjLhFGusstmLIY2pIpPNUOho1YYatPGgwJBANq8vnj64p/Hv6ZOQZxGB1WksK2Hm9TwfJ5I9jDu982Ds6DV9B0L4IvKjHvTGdnye234+4rB4SpGFIFEo+PXLdECQBiOPMW2cT8YgboxDx2E4bt8g9zSM5Oym2Xeqs+o4nKbcu96LipNRkeFgjwXN1708QuNNMYsD0nO+WIxqxZMkZsCQHtS+Jj/LCnQZgLKxXZAllxqSTlBln2YnBgk6HqHLp8Eknx2rUXhoxE1vD9tNmom6PiaZlQyukrQkp5GOMWDMkU=");
-    return client;
-    }*/
+        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDIgHnOn7LLILlKETd6BFRJ0GqgS2Y3mn1wMQmyh9zEyWlz5p1zrahRahbXAfCfSqshSNfqOmAQzSHRVjCqjsAw1jyqrXaPdKBmr90DIpIxmIyKXv4GGAkPyJ/6FTFY99uhpiq0qadD/uSzQsefWo0aTvP/65zi3eof7TcZ32oWpwIDAQAB";
+        String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMiAec6fsssguUoRN3oEVEnQaqBLZjeafXAxCbKH3MTJaXPmnXOtqFFqFtcB8J9KqyFI1+o6YBDNIdFWMKqOwDDWPKqtdo90oGav3QMikjGYjIpe/gYYCQ/In/oVMVj326GmKrSpp0P+5LNCx59ajRpO8//rnOLd6h/tNxnfahanAgMBAAECgYEAusouMFfJGsIWvLEDbPIhkE7RNxpnVP/hQqb8sM0v2EkHrAk5wG4VNBvQwWe2QsAuY6jYNgdCPgTNL5fLaOnqkyy8IobrddtT/t3vDX96NNjHP4xfhnMbpGjkKZuljWKduK2FAh83eegrSH48TuWS87LjeZNHhr5x4C0KHeBTYekCQQD5cyrFuKua6GNG0dTj5gA67R9jcmtcDWgSsuIXS0lzUeGxZC4y/y/76l6S7jBYuGkz/x2mJaZ/b3MxxcGQ01YNAkEAzcRGLTXgTMg33UOR13oqXiV9cQbraHR/aPmS8kZxkJNYows3K3umNVjLhFGusstmLIY2pIpPNUOho1YYatPGgwJBANq8vnj64p/Hv6ZOQZxGB1WksK2Hm9TwfJ5I9jDu982Ds6DV9B0L4IvKjHvTGdnye234+4rB4SpGFIFEo+PXLdECQBiOPMW2cT8YgboxDx2E4bt8g9zSM5Oym2Xeqs+o4nKbcu96LipNRkeFgjwXN1708QuNNMYsD0nO+WIxqxZMkZsCQHtS+Jj/LCnQZgLKxXZAllxqSTlBln2YnBgk6HqHLp8Eknx2rUXhoxE1vD9tNmom6PiaZlQyukrQkp5GOMWDMkU=";
+//        AlipayClient client = new DefaultAlipayClient(
+//        // 线上地址
+//        //"https://openapi.alipay.com/gateway.do",
+//        // 沙箱地址
+//        "http://openapi.alipaydev.com/gateway.do",
+//        // 公众号ID
+//        "2013082200024933",
+//        // 公众号RSA私钥
+//                privateKey,
+//                "json",
+//                "GBK",
+//                publicKey,"RSA2");
+        DefaultAlipayClient.Builder builder = DefaultAlipayClient.builder("http://openapi.alipaydev.com/gateway.do","2013082200024933",privateKey);
+        builder.format("json");
+        builder.charset("GBK");
+        builder.alipayPublicKey(publicKey);
+        builder.signType("RSA2");
+        builder.encryptKey("XjAKtRsdSTTX7yAf");
+         return builder.build();
+    }
 
+
+    @Test
+    public void test() throws AlipayApiException {
+        AlipayClient alipayClient = getAlipayClient();
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+        request.setBizContent("{" +
+                "\"out_trade_no\":\"20150320010101001\"," +
+                "\"trade_no\":\"2014112611001004680 073956707\"" +
+                "  }");
+        request.setNeedEncrypt(true);
+        AlipayTradeQueryResponse response = alipayClient.execute(request);
+
+        System.out.println("response:"+JSON.toJSONString(response));
+        if(response.isSuccess()){
+            System.out.println("调用成功");
+        } else {
+            System.out.println("调用失败");
+        }
+    }
     private static void checkSignAndDecrypt() throws AlipayApiException {
         // 参数构建
         String biz_content = "<XML><AppId><![CDATA[2013082200024893]]></AppId><FromUserId><![CDATA[2088102122485786]]></FromUserId><CreateTime>1377228401913</CreateTime><MsgType><![CDATA[click]]></MsgType><EventType><![CDATA[event]]></EventType><ActionParam><![CDATA[authentication]]></ActionParam><AgreementId><![CDATA[201308220000000994]]></AgreementId><AccountNo><![CDATA[null]]></AccountNo><UserInfo><![CDATA[{\"logon_id\":\"15858179811\",\"user_name\":\"许旦辉\"}]]></UserInfo></XML>";
@@ -152,11 +189,12 @@ public class PublicTest {
         params.put("sign_type", "RSA");
         params.put("sign", AlipaySignature.rsaSign(params, privateKey, "UTF-8"));
 
+        System.out.println("密文："+ JSON.toJSONString(params));
         // 验签&解密
         String resultContent = AlipaySignature.checkSignAndDecrypt(params, publicKey, privateKey,
             true, true);
 
-        System.out.println(resultContent);
+        System.out.println("验签&解密:"+resultContent);
     }
 
     private static void encryptAndSign() throws AlipayApiException {
@@ -177,7 +215,7 @@ public class PublicTest {
         String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMiAec6fsssguUoRN3oEVEnQaqBLZjeafXAxCbKH3MTJaXPmnXOtqFFqFtcB8J9KqyFI1+o6YBDNIdFWMKqOwDDWPKqtdo90oGav3QMikjGYjIpe/gYYCQ/In/oVMVj326GmKrSpp0P+5LNCx59ajRpO8//rnOLd6h/tNxnfahanAgMBAAECgYEAusouMFfJGsIWvLEDbPIhkE7RNxpnVP/hQqb8sM0v2EkHrAk5wG4VNBvQwWe2QsAuY6jYNgdCPgTNL5fLaOnqkyy8IobrddtT/t3vDX96NNjHP4xfhnMbpGjkKZuljWKduK2FAh83eegrSH48TuWS87LjeZNHhr5x4C0KHeBTYekCQQD5cyrFuKua6GNG0dTj5gA67R9jcmtcDWgSsuIXS0lzUeGxZC4y/y/76l6S7jBYuGkz/x2mJaZ/b3MxxcGQ01YNAkEAzcRGLTXgTMg33UOR13oqXiV9cQbraHR/aPmS8kZxkJNYows3K3umNVjLhFGusstmLIY2pIpPNUOho1YYatPGgwJBANq8vnj64p/Hv6ZOQZxGB1WksK2Hm9TwfJ5I9jDu982Ds6DV9B0L4IvKjHvTGdnye234+4rB4SpGFIFEo+PXLdECQBiOPMW2cT8YgboxDx2E4bt8g9zSM5Oym2Xeqs+o4nKbcu96LipNRkeFgjwXN1708QuNNMYsD0nO+WIxqxZMkZsCQHtS+Jj/LCnQZgLKxXZAllxqSTlBln2YnBgk6HqHLp8Eknx2rUXhoxE1vD9tNmom6PiaZlQyukrQkp5GOMWDMkU=";
         String responseContent = AlipaySignature.encryptAndSign(bizContent, publicKey, privateKey,
             "UTF-8", true, true);
-        System.out.println(responseContent);
+        System.out.println("encryptAndSign:"+responseContent);
 
     }
 }

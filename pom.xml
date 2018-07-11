@@ -17,5 +17,6 @@
 
     <modules>
         <module>alipaysdk</module>
+        <module>simple_sdk</module>
     </modules>
 </project>

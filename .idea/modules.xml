@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/alipaysdk/alipaysdk.iml" filepath="$PROJECT_DIR$/alipaysdk/alipaysdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/sdk.iml" filepath="$PROJECT_DIR$/sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/simple_sdk/simple_sdk.iml" filepath="$PROJECT_DIR$/simple_sdk/simple_sdk.iml" />
     </modules>
   </component>
 </project>
